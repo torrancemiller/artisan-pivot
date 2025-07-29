@@ -348,10 +348,10 @@ function create() {
          const resetPanel = this.add.graphics();
          resetPanel.fillStyle(0xff6600, 0.8);
          resetPanel.lineStyle(2, 0xffffff, 0.8);
-         resetPanel.fillRoundedRect(630, 480, 80, 40, 8);
-         resetPanel.strokeRoundedRect(630, 480, 80, 40, 8);
+         resetPanel.fillRoundedRect(620, 480, 100, 40, 8);
+         resetPanel.strokeRoundedRect(620, 480, 100, 40, 8);
 
-         const resetButton = this.add.text(650, 490, '⟲ RESET', {
+         const resetButton = this.add.text(670, 500, '⟲ RESET', {
              fontSize: '12px',
              fill: '#ffffff',
              fontFamily: 'Orbitron, monospace',
@@ -359,7 +359,7 @@ function create() {
              padding: { x: 8, y: 4 },
              stroke: '#ffffff',
              strokeThickness: 1
-         }).setInteractive();
+         }).setOrigin(0.5).setInteractive();
 
         resetButton.on('pointerdown', () => {
             resetLevel();
