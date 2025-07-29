@@ -133,8 +133,8 @@
     <h1 class="game-title">🎮 ARTISAN PIVOT 🎮</h1>
     <p class="game-subtitle neon-glow">NEURAL WORKFLOW MATRIX • SYNTHCRAFT PROTOCOL</p>
     
-    <script src="phaser.min.js"></script>
-    <script src="game.js"></script>
+    <script src="{{ asset('phaser.min.js') }}"></script>
+    <script src="{{ asset('game.js') }}"></script>
     
     <div class="instructions">
         <p>⚡ <strong>INTERFACE PROTOCOL:</strong> Drag neural pathways between processing nodes to establish workflow matrices. Execute the required sequence protocol within temporal constraints!</p>
