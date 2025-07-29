@@ -1,0 +1,21 @@
+name: artisan-pivot
+
+build:
+  commands:
+    - composer install --no-dev --optimize-autoloader
+    - php artisan package:discover --ansi || true
+
+deploy:
+  web:
+    start: |
+      php-fpm -D && nginx -g "daemon off;"
+
+environment:
+  APP_ENV: production
+  APP_DEBUG: false
+  CACHE_DRIVER: array
+  SESSION_DRIVER: array
+  QUEUE_CONNECTION: sync
+  
+# Disable write operations that fail on read-only filesystems
+services: [] 
