@@ -33,9 +33,14 @@ tmp/
 temp/
 
 # Laravel specific
-bootstrap/cache/
+bootstrap/cache/*
+!bootstrap/cache/packages.php
+!bootstrap/cache/services.php
 storage/app/
-storage/framework/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
 storage/logs/
 public/hot
 public/storage
@@ -43,4 +48,3 @@ public/storage
 Homestead.json
 Homestead.yaml
 auth.json
-*.cache
