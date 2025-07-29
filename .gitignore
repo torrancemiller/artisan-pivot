@@ -1,7 +1,6 @@
 # Dependencies
 node_modules/
 vendor/
-vendor/composer/
 npm-debug.log*
 
 # Environment files
@@ -45,10 +44,3 @@ Homestead.json
 Homestead.yaml
 auth.json
 *.cache
-vendor/composer/autoload_classmap.php
-vendor/composer/autoload_psr4.php
-vendor/composer/autoload_real.php
-vendor/composer/autoload_static.php
-vendor/composer/installed.json
-vendor/composer/installed.php
-vendor/composer/platform_check.php
