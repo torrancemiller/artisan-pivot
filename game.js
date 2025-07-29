@@ -19,10 +19,12 @@ let selectedNode = null;
 let dragLine = null;
 let graphics;
 let currentLevel = 1;
-let timer = 300; // 5 minutes in seconds
+let timer = levelSettings[1].time; // Use level-specific timer
 let timerText;
 let levelText;
 let instructionText;
+let difficultyText;
+let descriptionText;
 let gameStarted = false;
 let gameWon = false;
 let nodeHighlights = [];
@@ -39,11 +41,51 @@ const colors = {
     darkBlue: 0x0f3460
 };
 
-// Define the correct sequence for each level
+// Define the correct sequence for each level with increasing difficulty
 const levels = {
+    // Tutorial levels
     1: ['cut', 'carve', 'polish', 'assemble'],
     2: ['cut', 'polish', 'carve', 'assemble'],
-    3: ['carve', 'cut', 'assemble', 'polish']
+    3: ['carve', 'cut', 'assemble', 'polish'],
+    
+    // Intermediate levels - more complex sequences
+    4: ['polish', 'cut', 'carve', 'assemble'],
+    5: ['carve', 'polish', 'cut', 'assemble'],
+    6: ['assemble', 'cut', 'polish', 'carve'],
+    
+    // Advanced levels - reverse engineering
+    7: ['assemble', 'polish', 'carve', 'cut'],
+    8: ['polish', 'assemble', 'cut', 'carve'],
+    9: ['carve', 'assemble', 'polish', 'cut'],
+    
+    // Expert levels - complex workflows
+    10: ['cut', 'carve', 'cut', 'polish', 'assemble'],
+    11: ['polish', 'carve', 'polish', 'cut', 'assemble'],
+    12: ['carve', 'cut', 'polish', 'carve', 'assemble'],
+    
+    // Master levels - maximum complexity
+    13: ['cut', 'polish', 'carve', 'polish', 'cut', 'assemble'],
+    14: ['carve', 'cut', 'carve', 'polish', 'cut', 'assemble'],
+    15: ['polish', 'carve', 'cut', 'carve', 'polish', 'assemble']
+};
+
+// Level difficulty settings
+const levelSettings = {
+    1: { time: 300, description: "Basic Assembly", difficulty: "TUTORIAL" },
+    2: { time: 280, description: "Refined Process", difficulty: "TUTORIAL" },
+    3: { time: 260, description: "Alternative Flow", difficulty: "TUTORIAL" },
+    4: { time: 240, description: "Polish First", difficulty: "INTERMEDIATE" },
+    5: { time: 220, description: "Carve Lead", difficulty: "INTERMEDIATE" },
+    6: { time: 200, description: "Reverse Logic", difficulty: "INTERMEDIATE" },
+    7: { time: 180, description: "Backwards Build", difficulty: "ADVANCED" },
+    8: { time: 160, description: "Mixed Methods", difficulty: "ADVANCED" },
+    9: { time: 140, description: "Complex Chain", difficulty: "ADVANCED" },
+    10: { time: 120, description: "Double Cut", difficulty: "EXPERT" },
+    11: { time: 110, description: "Polish Emphasis", difficulty: "EXPERT" },
+    12: { time: 100, description: "Carve Master", difficulty: "EXPERT" },
+    13: { time: 90, description: "Multi-Polish", difficulty: "MASTER" },
+    14: { time: 80, description: "Precision Work", difficulty: "MASTER" },
+    15: { time: 70, description: "Neural Synthesis", difficulty: "MASTER" }
 };
 
 function preload() {
@@ -212,7 +254,7 @@ function create() {
     });
 
     // Add futuristic UI elements
-    timerText = this.add.text(580, 20, `⚡ ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, '0')}`, {
+    timerText = this.add.text(550, 15, `⚡ ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, '0')}`, {
         fontSize: '16px',
         fill: '#00ffff',
         fontFamily: 'Orbitron, monospace',
@@ -222,7 +264,7 @@ function create() {
         strokeThickness: 1
     });
 
-    levelText = this.add.text(580, 50, `🔮 LEVEL ${currentLevel}`, {
+    levelText = this.add.text(550, 45, `🔮 LEVEL ${currentLevel}`, {
         fontSize: '14px',
         fill: '#ff0080',
         fontFamily: 'Orbitron, monospace',
@@ -232,7 +274,27 @@ function create() {
         strokeThickness: 1
     });
 
-    instructionText = this.add.text(30, 20, `🎯 SEQUENCE: ${levels[currentLevel].join(' → ').toUpperCase()}`, {
+    difficultyText = this.add.text(550, 75, `💎 ${levelSettings[currentLevel].difficulty}`, {
+        fontSize: '12px',
+        fill: getDifficultyColor(levelSettings[currentLevel].difficulty),
+        fontFamily: 'Orbitron, monospace',
+        backgroundColor: '#1a0a2e',
+        padding: { x: 10, y: 4 },
+        stroke: getDifficultyColor(levelSettings[currentLevel].difficulty),
+        strokeThickness: 1
+    });
+
+    descriptionText = this.add.text(550, 105, `${levelSettings[currentLevel].description}`, {
+        fontSize: '10px',
+        fill: '#ffffff',
+        fontFamily: 'Rajdhani, sans-serif',
+        backgroundColor: '#0a0a0f',
+        padding: { x: 8, y: 3 },
+        stroke: '#ffffff',
+        strokeThickness: 0.5
+    });
+
+    instructionText = this.add.text(20, 15, `🎯 SEQUENCE: ${levels[currentLevel].join(' → ').toUpperCase()}`, {
         fontSize: '14px',
         fill: '#00ff80',
         fontFamily: 'Rajdhani, sans-serif',
@@ -243,12 +305,12 @@ function create() {
     });
 
     // Add futuristic reset button
-    const resetButton = this.add.text(580, 80, '⟲ RESET', {
-        fontSize: '14px',
+    const resetButton = this.add.text(550, 135, '⟲ RESET', {
+        fontSize: '12px',
         fill: '#ffffff',
         fontFamily: 'Orbitron, monospace',
         backgroundColor: '#ff6600',
-        padding: { x: 12, y: 6 },
+        padding: { x: 10, y: 4 },
         stroke: '#ffffff',
         strokeThickness: 1
     }).setInteractive();
@@ -302,6 +364,17 @@ function createGridBackground() {
     });
 }
 
+function getDifficultyColor(difficulty) {
+    switch(difficulty) {
+        case 'TUTORIAL': return '#00ff80';
+        case 'INTERMEDIATE': return '#ffff00';
+        case 'ADVANCED': return '#ff6600';
+        case 'EXPERT': return '#ff0080';
+        case 'MASTER': return '#8000ff';
+        default: return '#ffffff';
+    }
+}
+
 function checkWinCondition() {
     const currentSequence = getConnectionSequence();
     const requiredSequence = levels[currentLevel];
@@ -311,17 +384,18 @@ function checkWinCondition() {
         instructionText.setText(`✨ LEVEL ${currentLevel} SYNTHESIZED ✨`);
         instructionText.setStyle({ fill: '#ffff00', stroke: '#ffff00' });
         
-        // Vaporwave celebration effect
-        for (let i = 0; i < 15; i++) {
+        // Enhanced celebration effect based on difficulty
+        const celebrationCount = levelSettings[currentLevel].difficulty === 'MASTER' ? 25 : 15;
+        for (let i = 0; i < celebrationCount; i++) {
             setTimeout(() => {
-                const effects = ['⭐', '✨', '💫', '🔮', '⚡'];
+                const effects = ['⭐', '✨', '💫', '🔮', '⚡', '💎', '🏆'];
                 const effect = effects[Math.floor(Math.random() * effects.length)];
                 const star = game.scene.scenes[0].add.text(
                     Phaser.Math.Between(100, 700),
                     Phaser.Math.Between(100, 500),
                     effect,
                     { 
-                        fontSize: '24px',
+                        fontSize: levelSettings[currentLevel].difficulty === 'MASTER' ? '28px' : '24px',
                         fill: `#${Math.floor(Math.random()*16777215).toString(16)}`
                     }
                 );
@@ -343,51 +417,115 @@ function checkWinCondition() {
             currentLevel++;
             if (levels[currentLevel]) {
                 resetLevel();
-                instructionText.setText(`🎯 SEQUENCE: ${levels[currentLevel].join(' → ').toUpperCase()}`);
-                instructionText.setStyle({ fill: '#00ff80', stroke: '#00ff80' });
-                levelText.setText(`🔮 LEVEL ${currentLevel}`);
+                updateUIForNewLevel();
             } else {
-                instructionText.setText('👑 NEURAL MATRIX MASTERED! PROTOCOL COMPLETE! 👑');
+                instructionText.setText('👑 NEURAL MATRIX MASTERED! ALL 15 LEVELS COMPLETE! 👑');
                 instructionText.setStyle({ fill: '#ff0080', stroke: '#ff0080' });
+                
+                // Final celebration
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const finalEffect = game.scene.scenes[0].add.text(
+                            Phaser.Math.Between(50, 750),
+                            Phaser.Math.Between(50, 550),
+                            '🏆',
+                            { fontSize: '32px', fill: '#ffd700' }
+                        );
+                        
+                        game.scene.scenes[0].tweens.add({
+                            targets: finalEffect,
+                            y: finalEffect.y - 200,
+                            alpha: 0,
+                            rotation: Math.PI * 4,
+                            duration: 2000,
+                            ease: 'Power2',
+                            onComplete: () => finalEffect.destroy()
+                        });
+                    }, i * 100);
+                }
             }
         }, 3500);
     }
 }
 
+function updateUIForNewLevel() {
+    instructionText.setText(`🎯 SEQUENCE: ${levels[currentLevel].join(' → ').toUpperCase()}`);
+    instructionText.setStyle({ fill: '#00ff80', stroke: '#00ff80' });
+    levelText.setText(`🔮 LEVEL ${currentLevel}`);
+    difficultyText.setText(`💎 ${levelSettings[currentLevel].difficulty}`);
+    difficultyText.setStyle({ 
+        fill: getDifficultyColor(levelSettings[currentLevel].difficulty),
+        stroke: getDifficultyColor(levelSettings[currentLevel].difficulty)
+    });
+    descriptionText.setText(`${levelSettings[currentLevel].description}`);
+}
+
 function getConnectionSequence() {
-    // Build a sequence from connections starting from the first node
+    // For complex sequences where nodes can be used multiple times,
+    // we need to trace the actual path through connections
     const sequence = [];
-    const visited = new Set();
     
-    // Find the starting node (one that has no incoming connections)
-    const incomingNodes = new Set(connections.map(c => c.to.name));
-    const startingNodes = connections.filter(c => !incomingNodes.has(c.from.name));
+    if (connections.length === 0) return sequence;
     
-    if (startingNodes.length === 0 && connections.length > 0) {
-        // If no clear starting node, start with the first connection
-        let current = connections[0].from.name;
-        sequence.push(current);
-        visited.add(current);
-        
-        while (true) {
-            const nextConnection = connections.find(c => c.from.name === current && !visited.has(c.to.name));
-            if (!nextConnection) break;
-            current = nextConnection.to.name;
-            sequence.push(current);
-            visited.add(current);
+    // Build adjacency map
+    const adjacencyMap = new Map();
+    const incomingCount = new Map();
+    
+    // Initialize all nodes
+    ['cut', 'carve', 'polish', 'assemble'].forEach(node => {
+        adjacencyMap.set(node, []);
+        incomingCount.set(node, 0);
+    });
+    
+    // Build the graph
+    connections.forEach(conn => {
+        adjacencyMap.get(conn.from.name).push(conn.to.name);
+        incomingCount.set(conn.to.name, incomingCount.get(conn.to.name) + 1);
+    });
+    
+    // Find starting nodes (nodes with no incoming connections)
+    const startingNodes = [];
+    for (let [node, count] of incomingCount) {
+        if (count === 0 && adjacencyMap.get(node).length > 0) {
+            startingNodes.push(node);
         }
-    } else if (startingNodes.length > 0) {
-        let current = startingNodes[0].from.name;
-        sequence.push(current);
-        visited.add(current);
-        
-        while (true) {
-            const nextConnection = connections.find(c => c.from.name === current && !visited.has(c.to.name));
-            if (!nextConnection) break;
-            current = nextConnection.to.name;
-            sequence.push(current);
-            visited.add(current);
+    }
+    
+    // If no clear starting node, find any node that appears in connections
+    if (startingNodes.length === 0) {
+        const allNodes = [...new Set(connections.flatMap(c => [c.from.name, c.to.name]))];
+        if (allNodes.length > 0) {
+            startingNodes.push(allNodes[0]);
         }
+    }
+    
+    // Trace the path from starting node
+    if (startingNodes.length > 0) {
+        const visited = new Set();
+        const path = [];
+        
+        function dfs(node, currentPath) {
+            currentPath.push(node);
+            
+            const neighbors = adjacencyMap.get(node) || [];
+            if (neighbors.length === 0) {
+                // End of path, check if it's longer than current best
+                if (currentPath.length > path.length) {
+                    path.splice(0, path.length, ...currentPath);
+                }
+            } else {
+                // Continue to next nodes
+                neighbors.forEach(neighbor => {
+                    dfs(neighbor, [...currentPath]);
+                });
+            }
+        }
+        
+        startingNodes.forEach(startNode => {
+            dfs(startNode, []);
+        });
+        
+        return path;
     }
     
     return sequence;
@@ -403,7 +541,7 @@ function resetLevel() {
     dragLine = null;
     gameWon = false;
     gameStarted = false;
-    timer = 300; // Reset timer
+    timer = levelSettings[currentLevel].time; // Reset timer to current level's time
 }
 
 function update() {
