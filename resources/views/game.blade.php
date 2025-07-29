@@ -133,8 +133,8 @@
     <h1 class="game-title">🎮 ARTISAN PIVOT 🎮</h1>
     <p class="game-subtitle neon-glow">NEURAL WORKFLOW MATRIX • SYNTHCRAFT PROTOCOL</p>
     
-    <script src="{{ asset('phaser.min.js') }}"></script>
-    <script src="{{ asset('game.js') }}"></script>
+    <script src="phaser.min.js"></script>
+    <script src="game.js"></script>
     
     <div class="instructions">
         <p>⚡ <strong>INTERFACE PROTOCOL:</strong> Master 15 increasingly challenging levels of neural workflow synthesis. Connect nodes in the correct sequence to craft perfect sculptures!</p>
